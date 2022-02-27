@@ -379,6 +379,8 @@ components:
           type: integer
         name:
           type: string
+        photo:
+          type: string
     recipe:
       type: object
       properties:
@@ -417,6 +419,8 @@ components:
           type: string
         isAdmin:
           type: boolean
+        profilePhoto:
+          type: string
         savedRecipes:
           type: array
           items:
