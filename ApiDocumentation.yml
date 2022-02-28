@@ -280,7 +280,35 @@ paths:
         400:
           description: Invalid ID supplied
           content: {}
-                  
+  /vendors:
+    post:
+      tags:
+      - vendors
+      summary: send customer delivery data
+      requestBody:
+        description: customer data
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                surname:
+                  type: string
+                address:
+                  type: string
+                cardNumber:
+                  type: string
+                expiratonDate:
+                  type: string
+                ccv:
+                  type: string
+        required: true
+      responses:
+        200:
+          description: OK
+
   /registration:
     post:
       tags:
