@@ -9,13 +9,13 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 1.0.0
+  version: 1.1.0
 servers:
 - url: /v2
 tags:
 - name: recipe
 - name: ingredient
-- name: security
+- name: user
 - name: vendors
 paths:
   /recipe:
@@ -33,23 +33,34 @@ paths:
         required: true
       responses:
         200:
-          description: OK
+          description: New recipe created
           content: {}
-        405:
-          description: Invalid input
+        401:
+          description: User is not authorized 
+          content: {}
+        403:
+          description: Invalid recipe posted
           content: {}
 
     get:
       tags:
       - recipe
-      summary: returns random recipe from previously selected ingredients
+      summary: returns recipes available from selected ingredients
+      parameters:
+        - name: page
+          in: query
+          required: true
+          schema:
+            type: integer
       responses:
         200:
           description: Ok
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/recipe'
+                type: array
+                items:
+                  $ref: '#/components/schemas/recipe' 
         404:
           description: Recipe not found
           content: {}
@@ -78,15 +89,16 @@ paths:
         200:
           description: OK
           content: {}
-        400:
-          description: Invalid ID supplied
+        401:
+          description: User is not nauthorized
+          content: {}
+        403:
+          description: Validation exception
           content: {}
         404:
           description: Recipe not found
           content: {}
-        405:
-          description: Validation exception
-          content: {}
+
       
     delete:
       tags:
@@ -102,18 +114,20 @@ paths:
       responses:
         200:
           description: OK
-        400:
-          description: Invalid ID supplied
+        401:
+          description: User is not nauthorized
+          content: {}
+        403:
+          description: Validation exception
           content: {}
         404:
           description: Recipe not found
           content: {}
-  /ingredient:
+  /ingredients:
     post:
       tags:
       - ingredient
       summary: Add a new ingredient to the store
-      operationId: addIngredient
       requestBody:
         description: ingredient object that needs to be added to the store
         content:
@@ -125,8 +139,14 @@ paths:
         200:
           description: OK
           content: {}
-        405:
-          description: Invalid input
+        401:
+          description: User is not authorized
+          content: {}
+        403:
+          description: Validation exception
+          content: {}
+        404:
+          description: Ingredient not found
           content: {}
 
     get:
@@ -142,8 +162,11 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ingredient' 
+        404:
+          description: Ingredients not found
+          content: {}
   
-  /ingredient/{id}:
+  /ingredients/{id}:
     put:
       tags:
       - ingredient
@@ -178,16 +201,15 @@ paths:
         200:
           description: OK
           content: {}
-        400:
-          description: Invalid ID supplied
+        401:
+          description: User is not authorized
           content: {}
-        404:
-          description: Recipe not found
-          content: {}
-        405:
+        403:
           description: Validation exception
           content: {}
-      
+        404:
+          description: Ingredient not found
+          content: {}
     delete:
       tags:
       - ingredient
@@ -202,18 +224,20 @@ paths:
       responses:
         200:
           description: OK
-        400:
-          description: Invalid ID supplied
+          content: {}
+        401:
+          description: User is not authorized
           content: {}
         404:
-          description: ingredient not found
+          description: Ingredient not found
+          content: {}
 
                   
   /vendors/recipes:
     get:
       tags:
       - vendors
-      summary: Get list of recipes available in delivery
+      summary: Get list of vendors that can deliver selected dish
       parameters:
       - name: page
         in: query
@@ -240,9 +264,9 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/vendor'
-        400:
-          description: Invalid ID supplied
+                  $ref: '#/components/schemas/restaurant'
+        404:
+          description: No vendors found
           content: {}
           
   /vendors/ingretients:
@@ -276,9 +300,9 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/vendor'
-        400:
-          description: Invalid ID supplied
+                  $ref: '#/components/schemas/shop'
+        404:
+          description: Invalid ID 
           content: {}
   /vendors:
     post:
@@ -298,22 +322,34 @@ paths:
                   type: string
                 address:
                   type: string
-                cardNumber:
-                  type: string
-                expiratonDate:
-                  type: string
-                ccv:
-                  type: string
         required: true
       responses:
         200:
           description: OK
+        403:
+          description: Validation exception
+          content: {}
 
   /registration:
     post:
       tags:
-        - security
+        - user
       summary: register new user
+      requestBody:
+        description: customer data needed to create profile. Passwo
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                username:
+                  type: "string"
+                emal:
+                  type: "string"
+                password:
+                  type: "string"
+                repPassword:
+                  type: "string"
       responses:
         "200":
           description: OK
@@ -322,18 +358,16 @@ paths:
               schema:
                 type: "object"
                 properties:
-                  username:
+                  token:
                     type: "string"
-                  emal:
-                    type: "string"
-                  password:
-                    type: "string"
-                  repPassword:
-                    type: "string"
-  /auth:
+        403:
+          description: Validation exception
+          content: {}
+
+  /logging:
     post:
       tags:
-        - security
+        - user
       summary: logging in
       requestBody:
         required: true
@@ -356,10 +390,14 @@ paths:
                 properties:
                   token:
                     type: "string"
-  /auth/{id}:
+        403:
+          description: Validation exception
+          content: {}
+
+  /user/{id}:
     delete:
       tags:
-      - security
+      - user
       summary: delete existing user
       parameters:
         - in: "path"
@@ -379,7 +417,7 @@ paths:
           description: user not found
     put:
       tags:
-      - security
+      - user
       summary: edit existing user
       parameters:
         - in: "path"
@@ -453,7 +491,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/recipe'
-    vendor:
+    restaurant:
       type: object
       properties:
         productName:
@@ -462,5 +500,20 @@ components:
           type: string
         price:
           type: integer
+          
+    shop:
+      type: object
+      properties:
+        vendorName:
+          type: string
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              productName:
+                type: string
+              price:
+                type: integer
         
 
