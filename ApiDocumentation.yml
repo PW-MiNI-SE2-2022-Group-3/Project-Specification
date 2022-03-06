@@ -351,7 +351,7 @@ paths:
                 repPassword:
                   type: "string"
       responses:
-        "200":
+        200:
           description: OK
           content:
             application/json:
@@ -381,7 +381,7 @@ paths:
                 password:
                   type: string
       responses:
-        "200":
+        200:
           description: OK
           content:
             application/json:
@@ -407,13 +407,13 @@ paths:
           schema:
             type: "integer"
       responses:
-        "200":
+        200:
           description: OK
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/user"
-        "404":
+        404:
           description: user not found
     put:
       tags:
@@ -427,13 +427,13 @@ paths:
           schema:
             type: "integer"
       responses:
-        "200":
+        200:
           description: OK
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/user"
-        "404":
+        404:
           description: user not found
 
 components:
