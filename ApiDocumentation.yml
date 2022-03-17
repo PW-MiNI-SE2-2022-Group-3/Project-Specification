@@ -64,7 +64,34 @@ paths:
         404:
           description: Recipe not found
           content: {}
- 
+  /admin/recipe:
+    get:
+      tags:
+      - recipe
+      summary: returns all recipes to admin panel 
+      parameters:
+        - name: page
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/recipe' 
+        401:
+          description: User not authorized
+          content: {}
   /recipe/{id}:
     put:
       tags:
@@ -164,6 +191,34 @@ paths:
                   $ref: '#/components/schemas/ingredient' 
         404:
           description: Ingredients not found
+          content: {}
+  /admin/ingredient:
+    get:
+      tags:
+      - ingredient
+      summary: returns all ingredients to admin panel 
+      parameters:
+        - name: page
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ingredient' 
+        401:
+          description: User not authorized
           content: {}
   
   /ingredients/{id}:
@@ -356,10 +411,7 @@ paths:
           content:
             application/json:
               schema:
-                type: "object"
-                properties:
-                  token:
-                    type: "string"
+                $ref: "#/components/schemas/user"
         403:
           description: Validation exception
           content: {}
@@ -516,4 +568,3 @@ components:
               price:
                 type: integer
         
-
