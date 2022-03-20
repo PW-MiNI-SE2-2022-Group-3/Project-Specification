@@ -172,9 +172,6 @@ paths:
         403:
           description: Validation exception
           content: {}
-        404:
-          description: Ingredient not found
-          content: {}
 
     get:
       tags:
