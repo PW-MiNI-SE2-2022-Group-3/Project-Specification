@@ -9,7 +9,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 1.2.0
+  version: 1.2.1
 servers:
 - url: /v2
 tags:
@@ -200,11 +200,16 @@ paths:
         200:
           description: Ok
           content:
-            '*/*':
+            application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ingredient' 
+                type: object
+                properties:
+                  total_ingredients:
+                    type: integer
+                  ingredients:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ingredient'
         401:
           description: User not authorized
           content: {}
@@ -244,17 +249,6 @@ paths:
       summary: Update an existing ingredient
       operationId: updateingredient
       parameters:
-        - name: page
-          in: query
-          required: true
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          description: Amount of results per page
-          schema:
-            type: integer
-            default: 10
         - in: path
           name: id
           description: "ID ingredient to edit"
