@@ -9,7 +9,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 1.1.0
+  version: 1.2.0
 servers:
 - url: /v2
 tags:
@@ -18,7 +18,7 @@ tags:
 - name: user
 - name: vendors
 paths:
-  /recipe:
+  /recipes:
     post:
       tags:
       - recipe
@@ -41,30 +41,7 @@ paths:
         403:
           description: Invalid recipe posted
           content: {}
-
-    get:
-      tags:
-      - recipe
-      summary: returns recipes available from selected ingredients
-      parameters:
-        - name: page
-          in: query
-          required: true
-          schema:
-            type: integer
-      responses:
-        200:
-          description: Ok
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/recipe' 
-        404:
-          description: Recipe not found
-          content: {}
-  /admin/recipe:
+  
     get:
       tags:
       - recipe
@@ -92,7 +69,39 @@ paths:
         401:
           description: User not authorized
           content: {}
-  /recipe/{id}:
+  /recipes/filter:
+    post:
+      tags:
+      - recipe
+      summary: returns recipes available from selected ingredients
+      parameters:
+        - name: page
+          in: query
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: List of previously selected ingredients by the user
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/ingredient'
+      responses:
+        200:
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/recipe' 
+        404:
+          description: Recipe not found
+          content: {}
+
+  /recipes/{id}:
     put:
       tags:
       - recipe
@@ -172,24 +181,6 @@ paths:
         403:
           description: Validation exception
           content: {}
-
-    get:
-      tags:
-      - ingredient
-      summary: returns list of next possible ingredients
-      responses:
-        200:
-          description: Ok
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ingredient' 
-        404:
-          description: Ingredients not found
-          content: {}
-  /admin/ingredient:
     get:
       tags:
       - ingredient
@@ -217,6 +208,34 @@ paths:
         401:
           description: User not authorized
           content: {}
+  /ingredients/next:
+    post:
+      tags:
+      - ingredient
+      summary: returns list of next possible ingredients
+      requestBody:
+        description: List of previously selected ingredients by the user
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/ingredient'
+        required: true
+      responses:
+        200:
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ingredient' 
+        404:
+          description: Ingredients not found
+          content: {}
+
+
   
   /ingredients/{id}:
     put:
@@ -322,7 +341,7 @@ paths:
           content: {}
           
   /vendors/ingretients:
-    get:
+    post:
       tags:
       - vendors
       summary: Get list of ingretients available in delivery
@@ -338,12 +357,14 @@ paths:
         schema:
           type: integer
           default: 10
-      - in: query
-        name: name
-        required: true
-        description: name of searched ingredient
-        schema:
-          type: string
+      requestBody:
+        description: List of ingredients user wants to buy
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/ingredient'
       responses:
         200:
           description: OK
