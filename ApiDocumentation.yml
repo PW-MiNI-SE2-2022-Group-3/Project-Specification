@@ -48,7 +48,37 @@ paths:
           description: Internal server error
           content: {}
   
-    get:
+
+    put:
+      tags:
+      - recipe
+      summary: Update an existing recipe
+      operationId: updateRecipe
+      requestBody:
+        description: Recipe object that needs to be added to the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/recipe'
+        required: true
+      responses:
+        200:
+          description: OK
+          content: {}
+        400:
+          description: Bad request - Incorrect body
+          content: {}
+        401:
+          description: User is not nauthorized
+          content: {}
+        404:
+          description: Recipe not found
+          content: {}
+        500:
+          description: Internal server error
+          content: {}
+  /recipes/all:        
+    post:
       tags:
       - recipe
       summary: returns all recipes to admin panel 
@@ -88,34 +118,6 @@ paths:
           content: {}
         401:
           description: User not authorized
-          content: {}
-        500:
-          description: Internal server error
-          content: {}
-    put:
-      tags:
-      - recipe
-      summary: Update an existing recipe
-      operationId: updateRecipe
-      requestBody:
-        description: Recipe object that needs to be added to the store
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/recipe'
-        required: true
-      responses:
-        200:
-          description: OK
-          content: {}
-        400:
-          description: Bad request - Incorrect body
-          content: {}
-        401:
-          description: User is not nauthorized
-          content: {}
-        404:
-          description: Recipe not found
           content: {}
         500:
           description: Internal server error
@@ -229,8 +231,38 @@ paths:
         500:
           description: Internal server error
           content: {}
+          
+    put:
+      tags:
+      - ingredient
+      summary: Update an existing ingredient
+      operationId: updateingredient
 
-    get:
+      requestBody:
+        description: ingredient object that needs to replace previous one
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ingredient'
+        required: true
+      responses:
+        200:
+          description: OK
+          content: {}
+        400:
+          description: Bad request - Invalid Body
+          content: {}
+        401:
+          description: User is not authorized
+          content: {}
+        404:
+          description: Ingredient not found
+          content: {}
+        500:
+          description: Internal server error
+          content: {}
+  /ingredients/all:
+    post:
       tags:
       - ingredient
       summary: returns all ingredients to admin panel 
@@ -275,38 +307,6 @@ paths:
         500:
           description: Internal server error
           content: {}
-          
-    put:
-      tags:
-      - ingredient
-      summary: Update an existing ingredient
-      operationId: updateingredient
-
-      requestBody:
-        description: ingredient object that needs to replace previous one
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ingredient'
-        required: true
-      responses:
-        200:
-          description: OK
-          content: {}
-        400:
-          description: Bad request - Invalid Body
-          content: {}
-        401:
-          description: User is not authorized
-          content: {}
-        404:
-          description: Ingredient not found
-          content: {}
-        500:
-          description: Internal server error
-          content: {}
-  
-    
   /ingredients/{id}:
 
     delete:
